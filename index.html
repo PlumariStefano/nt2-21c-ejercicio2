@@ -14,8 +14,29 @@
 
 
 <div class="container-fluid mt-3" id="app">
-    <input type="text" class="form-control" v-model="criterioDeBusqueda"
-        placeholder="Ingresar un criterio de busqueda...">
+    <input type="text" id="1" class="form-control" v-model="criterioDeBusqueda"
+        placeholder="busqueda completa..." >
+    
+    <div class="alert alert-warning" role="alert" v-if="ingresoCantCharMin.criterio1">
+            Debe ingresar al menos 3 caracteres para realizar la busqueda
+     </div>
+    <br>
+
+    <input type="text" id="2" class="form-control" v-model="criterioDeBusqueda1"
+         placeholder="Buscar por nombre y apellido..." >
+    
+    <div class="alert alert-warning" role="alert" v-if="ingresoCantCharMin.criterio2" >
+        Debe ingresar al menos 3 caracteres para realizar la busqueda
+      </div>
+    <br>
+
+    <input type="number" id="3" class="form-control" v-model="criterioDeBusqueda2"
+         placeholder="Buscar por Dni..." >
+   
+    <div class="alert alert-warning" role="alert" v-if="ingresoCantCharMin.criterio3">
+        Debe ingresar al menos 3 caracteres para realizar la busqueda
+          </div>
+          
     <br>
     <div class="card-deck m-0">
         <div class="row">
@@ -40,6 +61,8 @@
         el: '#app',
         data: {
             criterioDeBusqueda: '',
+            criterioDeBusqueda1: '',
+            criterioDeBusqueda2: '',
             //Aquí, en este array es donde tienen que agregar su información
             personas: [
                 {
@@ -172,16 +195,42 @@
         },
         computed: {
             personasFiltradas() {
+                if((this.criterioDeBusqueda.length >= 3) || (this.criterioDeBusqueda1.length >= 3 ) ||
+                    (this.criterioDeBusqueda2.length >= 3 )){
                 return this.personas.filter((persona) => {
                     let registroCompleto = `${persona.nombre} ${persona.apellido} ${persona.dni} ${persona.correo}`
+                    let registroNOMyAPE = `${persona.nombre} ${persona.apellido} `
+                    let registroDNI = ` ${persona.dni}`
                     return registroCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase())
+                        && registroNOMyAPE.toLowerCase().includes(this.criterioDeBusqueda1.toLowerCase()) 
+                        && registroDNI.toLowerCase().includes(this.criterioDeBusqueda2.toLowerCase())                   
                 });
+            }else{return this.personas}
+            },
+            ingresoCantCharMin(){
+                console.log(this.criterioDeBusqueda.length)
+                return {
+                    criterio1 : this.criterioDeBusqueda.length < 3  && this.criterioDeBusqueda.length >0,
+                    criterio2 : this.criterioDeBusqueda1.length < 3  && this.criterioDeBusqueda1.length >0,
+                    criterio3 : this.criterioDeBusqueda2.length < 3  && this.criterioDeBusqueda2.length >0,
+                }      
             }
         },
         methods: {
             getNombreCompleto(persona) {
                 return `${persona.nombre} ${persona.apellido}`
+            },
+
+            //metodo de prueba porque fallaba el this.criterioBusqueda.length
+            getCantChar(cri){
+                let a =cri.split("")
+                let cant= 0
+                a.forEach(a => {
+                    cant++
+                });
+                return cant
             }
+
         }
     });
 </script>
